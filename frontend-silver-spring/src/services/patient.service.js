@@ -1,28 +1,31 @@
 // import httpClient from '../http-common';
 import axios from "axios";
 
-
-const url = "http://localhost:3000/patients";
-const url2 = "http://localhost:3000/patientdetails";
+const url = "http://localhost:8080/patients";
 
 const getAll = () => {
   return axios.get(url);
 };
 
-const create = (data) => {
-  return axios.post(url2, data);
-};
-
 const get = (id) => {
-  return axios.get(url2+`/${id}`);
+  return axios.get(url+`/${id}`);
 };
 
-const update = (data) => {
-  return axios.put(url, data);
+const getAllocatedDoctors = (id) => {
+  return axios.get(url+`/doctors/${id}`);
+};
+
+const update = (id,data) => {
+  return axios.put(url+`/${id}`, data);
+};
+
+const create = (data) => {
+  return axios.post(url, data);
 };
 
 const remove = (id) => {
   return axios.delete(url+`/${id}`);
 };
 
-export default { getAll, create, get, update, remove };
+
+export default { getAll, create, get, update, remove,getAllocatedDoctors };
