@@ -11,6 +11,9 @@ import AdminPage from './components/Admin/AdminPage';
 import AddEmployee from './components/Admin/AddEmployee';
 import EditEmployee from './components/Admin/EditEmployee';
 import EmployeeInfo from './components/Admin/EmployeeInfo';
+import AddDoctor from './components/Admin/AddDoctor';
+import PatientList from './components/Accountant/PatientList';
+import Invoice from './components/Accountant/Invoice';
 
 function App() {
   return (
@@ -29,10 +32,14 @@ function App() {
             {/* admin page routes */}
             <Route path='/admin' element={<AdminPage />} />
             <Route path='/admin/add' element={<AddEmployee />} />
+            <Route path='/admin/addDoctor' element={<AddDoctor />} />
             <Route path='/admin/edit/:id' element={<EditEmployee />} />
             <Route path='/admin/info/:id' element={<EmployeeInfo />} />
-            PatientLoginDetails
-          </Routes>
+
+            {/* admin page routes */}
+            <Route exact path='/accountant' element={<PatientList />} />
+            <Route path='/accountant/invoice/:id' element={<Invoice />} />
+      </Routes>
     </div>
     </BrowserRouter>
   );

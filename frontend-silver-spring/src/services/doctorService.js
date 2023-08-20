@@ -8,6 +8,10 @@ const getAll = () => {
   return axios.get(url);
 };
 
+const create = (data) => {
+  return axios.post(url, data);
+};
+
 /****************************************************** */ 
 // const get = (id) => {
 //   return axios.get(url+`/${id}`);
@@ -30,4 +34,4 @@ const getAll = () => {
 // };
 
 
-export default { getAll};
+export default { getAll, create };

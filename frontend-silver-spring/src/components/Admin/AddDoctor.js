@@ -1,12 +1,26 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import employeeService from "../../services/employeeService";
+import doctorService from "../../services/employeeService";
 
 
-const AddEmployee = () => {
+const AddDoctor = () => {
 
     const navigate = useNavigate();
 
+
+
+//     "firstName": "string",
+//   "lastName": "string",
+//   "email": "string",
+//   "password": "string",
+//   "confirmPassword": "string",
+//   "role": "ADMIN",
+//   "dob": "2023-08-20",
+//   "gender": "MALE",
+//   "contactNo": 0,
+//   "hiringDate": "2023-08-20",
+//   "salary": 0,
+//   "charges": 0
 
 
 const [employeeDetails,setEmployeeDetails] = useState({
@@ -15,12 +29,13 @@ const [employeeDetails,setEmployeeDetails] = useState({
     email: "",
     password: "12345",
     confirmPassword: "12345",
-    role: "",
+    role: "DOCTOR",
     dob: "",
     gender: "",
     contactNo: "",
     hiringDate: "",
-    salary: ""
+    salary: "",
+    charges: ""
     });
 
     const handleChange = (key, value) => {
@@ -30,7 +45,7 @@ const [employeeDetails,setEmployeeDetails] = useState({
     
       function saveTheEmployee() {
         console.log(employeeDetails);
-        employeeService
+        doctorService
           .create(employeeDetails)
           .then((resp) => {
             navigate("/admin");
@@ -107,6 +122,14 @@ const [employeeDetails,setEmployeeDetails] = useState({
         />
 
         <br />
+        <label>Enter Charges</label>
+        <input
+          type="number"
+          value={employeeDetails.charges}
+          onChange={(e) => handleChange("charges", e.target.value)}
+        />
+
+        <br />
     
       <br/>
       <label>Enter Gender </label>
@@ -123,18 +146,6 @@ const [employeeDetails,setEmployeeDetails] = useState({
       </select>
       
       <br/>
-      <label>Enter Role </label>
-      <select
-        className="form-select"
-        aria-label="Default select example"
-        value={employeeDetails.role}
-        onChange={(e) => handleChange("role", e.target.value)}
-      >       <option >Select role </option>
-          <option  value="ADMIN">ADMIN</option>
-          <option  value="RECEPTIONIST">RECEPTIONIST</option>
-          <option  value="ACCOUNTANT">ACCOUNTANT</option>
-                
-      </select>
 
 
       {/* <Practise2></Practise2> */}
@@ -154,4 +165,4 @@ const [employeeDetails,setEmployeeDetails] = useState({
     );
 }
 
-export default AddEmployee;
+export default AddDoctor;
