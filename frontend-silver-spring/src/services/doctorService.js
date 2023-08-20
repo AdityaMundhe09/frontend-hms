@@ -3,6 +3,7 @@
 import axios from "axios";
 
 const url = "http://localhost:8080/doctors";
+const url2 = "http://localhost:8080/patients/patient"
 
 const getAll = () => {
   return axios.get(url);
@@ -12,26 +13,13 @@ const create = (data) => {
   return axios.post(url, data);
 };
 
-/****************************************************** */ 
-// const get = (id) => {
-//   return axios.get(url+`/${id}`);
-// };
+const getAllPatients =(id) =>{
+  return axios.get(url+`/patients/${id}`);
+ }
+ 
+ const addDoctor =(patient_id,doctor_id)=>{
+   return axios.put(url2+`/${patient_id}/doctor/${doctor_id}`);
+ }
 
-// const getAllocatedDoctors = (id) => {
-//   return axios.get(url+`/doctors/${id}`);
-// };
-
-// const update = (id,data) => {
-//   return axios.put(url+`/${id}`, data);
-// };
-
-// const create = (data) => {
-//   return axios.post(url, data);
-// };
-
-// const remove = (id) => {
-//   return axios.delete(url+`/${id}`);
-// };
-
-
-export default { getAll, create };
+ 
+export default { getAll, create,getAllPatients,addDoctor };
