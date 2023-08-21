@@ -39,8 +39,6 @@ const EditPatient = () => {
   }
 
   const handleChange = (key, value) => {
-    // console.log(value)
-    // console.log(addpatient.firstName)
     setaddPatient({ ...addpatient, [key]: value });
   };
 

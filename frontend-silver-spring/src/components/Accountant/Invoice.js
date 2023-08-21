@@ -1,22 +1,78 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import patientService from "../../services/patient.service";
+import wardService from "../../services/wardService";
 
 const Invoice = () => {
   const [patientDetails, setPatientDetails] = useState({});
+
+  const [wardDetails, setWardDetails] = useState({});
   const [doctorsAllocated, setDoctorsAllocated] = useState([]);
+  const [flag, setFlag] = useState(false);
+  const [flag2, setFlag2] = useState(false);
+  const [totalDays, setTotalDays] = useState(0);
+
+  const [addpatient, setaddPatient] = useState({
+    firstName: "",
+    lastName: "",
+    paymentStatus: "",
+    email: "",
+    dateOfAdmission: "",
+    bloodGroup: "",
+    dob: "",
+    disease: "",
+    wardId: "",
+    contactNo: "",
+    prescription:"",
+    gender: ""
+
+  });
+  
+  const navigate = useNavigate();
+
   const { id } = useParams();
+
+  
 
   useEffect(() => {
     getPatientDetail(id);
     getDoctorsList(id);
   }, []);
 
+  useEffect(() => {
+    saveAndNavigate();
+  }, [flag2]);
+
+  function getWardDetails(ward_id) {
+    wardService
+      .getById(ward_id)
+      .then((resp) => {
+        setWardDetails(resp.data);
+      })
+      .catch((err) => {
+        console.log("Error : " + err);
+      });
+    calculateNoOfDays();
+    // Charges();
+    setFlag(true);
+  }
+
+  function saveAndNavigate(){
+    if(flag2){
+      patientService.update(id,addpatient).then((resp)=>{
+      
+        navigate("/accountant");
+      }).catch((err)=>{
+        console.log(err+"error occured");
+      })
+    }
+
+  }
+
   function getDoctorsList(patientId) {
     patientService
       .getAllocatedDoctors(patientId)
       .then((resp) => {
-        console.log(resp.data);
         setDoctorsAllocated(resp.data);
       })
       .catch((err) => {
@@ -29,25 +85,46 @@ const Invoice = () => {
       .get(patientId)
       .then((resp) => {
         setPatientDetails(resp.data);
-        console.log(resp.data);
+        setaddPatient(resp.data);
       })
       .catch((error) => {
         console.log(error + "error occured");
       });
   }
 
-  function calculateDoctorCharges(){
+  const handleChange = (key, value) => {
+    console.log("called");
+    setaddPatient({ ...addpatient, [key]: value });
+  };
+
+  function calculateDoctorCharges() {
     var sum = 0;
-    doctorsAllocated.forEach(element => {
-        sum = sum + element.charges ;
+    doctorsAllocated.forEach((element) => {
+      sum = sum + element.charges;
     });
-    console.log(sum);
     return sum;
   }
 
-  function calculateNoOfDays(){
+  function calculateNoOfDays() {
+    var today = new Date();
+    var admission_date = new Date(patientDetails.dateOfAdmission);
+    var diff_in_time = today.getTime() - admission_date.getTime();
+    var total_days = Math.floor(diff_in_time / (1000 * 3600 * 24));
+    setTotalDays(total_days);
+    return total_days;
+  }
+
+
+  
+  function changePayStatus()
+  {    
+    //console.log(addpatient);
+    handleChange("paymentStatus","PAID");
+    setFlag2(true);
     
   }
+  
+ 
 
   return (
     <div>
@@ -89,7 +166,7 @@ const Invoice = () => {
             <td>DOB</td>
             <td>{patientDetails.dob}</td>
           </tr>
-          
+
           <tr>
             <td>payStatus</td>
             <td>{patientDetails.paymentStatus}</td>
@@ -103,8 +180,10 @@ const Invoice = () => {
             <td>{patientDetails.disease}</td>
           </tr>
           <tr>
-          <td>Doctors Allocated</td>
-          {doctorsAllocated.map((i)=>(<td key={i.doctorId}>{i.firstName}</td>))}
+            <td>Doctors Allocated</td>
+            {doctorsAllocated.map((i) => (
+              <td key={i.doctorId}>{i.firstName}</td>
+            ))}
           </tr>
           {/* <tr>
           <td>disease</td>
@@ -113,30 +192,72 @@ const Invoice = () => {
         </tbody>
       </table>
 
-      <table className="table table-striped">
-        <thead>
-        <tr>
-            <th>Sr No.</th>
-            <th>Items</th>
-            <th>charges</th>
-            <th>No of Days</th>
-            <th>Amount</th>
-        </tr>
-        </thead>
-        
-        <tbody>
+      <br />
+      <br />
 
-        <tr>
-            <td>1</td>
-            <td>Doctor  Charges</td>
-            <td>{calculateDoctorCharges()}</td>
-            <td></td>
-            <td></td>
-        </tr>
-        </tbody>
+      <button
+        onClick={() => {
+          getWardDetails(patientDetails.wardId);
+        }}
+      >
+        Generate BIll
+      </button>
 
-      </table>
+      <br />
+      <br />
 
+      {flag ? (
+        <div>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>Sr No.</th>
+                <th>Items</th>
+                <th>charges</th>
+                <th>No of Days</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Doctor Charges</td>
+                <td>{calculateDoctorCharges()}</td>
+                <td>{totalDays}</td>
+                <td>Rs. {calculateDoctorCharges() * totalDays}</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>{wardDetails.type} Ward Charges</td>
+                <td>{wardDetails.charges}</td>
+                <td>{totalDays}</td>
+                <td>Rs. {wardDetails.charges * totalDays}</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Medical Charges</td>
+                <td>1100</td>
+                <td>{totalDays}</td>
+                <td>Rs. {1100 * totalDays}</td>
+              </tr>
+
+              <tr>
+                <td colSpan={3}></td>
+                <td>
+                  Rs.{" "}
+                  {calculateDoctorCharges() * totalDays +
+                    wardDetails.charges * totalDays +
+                    1100 * totalDays}
+                </td>
+              </tr>
+            </tbody>
+          </table>{" "}
+          <button onClick={changePayStatus}>Pay</button>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

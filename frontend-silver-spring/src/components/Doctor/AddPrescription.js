@@ -10,7 +10,7 @@ const AddPrescription = () => {
   const [doctor, setDoctor] = useState(0);
   const [doctorsAllocated, setDoctorsAllocated] = useState([]);
 
-  let nav_url = "/doctors/" + doc_id;
+ // let nav_url = "/doctors/" + doc_id;
 
   const [addpatient, setaddPatient] = useState({
     firstName: "",
@@ -52,7 +52,7 @@ const AddPrescription = () => {
         console.log(error + "error occured");
       });
 
-    nav_url = nav_url + doc_id;
+   // nav_url = nav_url + doc_id;
   }
 
   function saveDoctor(patient_id, doctor_id) {
@@ -102,7 +102,7 @@ const AddPrescription = () => {
     if (doctor > 0) {
       saveDoctor(pat_id, doctor);
     }
-    navigate(nav_url);
+    navigate(`/doctors/${doc_id}`);
   }
 
   return (
@@ -225,7 +225,7 @@ const AddPrescription = () => {
         {" "}
         submit details
       </button>
-      <Link to={nav_url} className="btn btn-secondary">
+      <Link to={`/doctors/${doc_id}`} className="btn btn-secondary">
         Back to List
       </Link>
     </div>

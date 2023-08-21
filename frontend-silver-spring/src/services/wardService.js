@@ -6,4 +6,9 @@ const getAll = () => {
   return axios.get(url);
 };
 
-export default {getAll};
+const getById = (id) => {
+  return axios.get(url+`/${id}`);
+};
+
+
+export default {getAll,getById};
